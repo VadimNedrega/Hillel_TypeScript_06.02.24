@@ -14,7 +14,7 @@ function getAllBooks() {
 //функція logFirstAvailable()
 function logFirstAvailable(booksArray: Book[]) {
     console.log(`Array has length: ${booksArray.length}`);
-    console.log(`First's book name: ${booksArray.at(0)?.title}`);
+    console.log(`First's book name: ${booksArray[0].title}`);
 }
 
 //функція getBookTitlesByCategory()
@@ -23,7 +23,7 @@ function getBookTitlesByCategory(category: Category) {
 }
 
 //функція logBookTitles()
-function logBookTitles(titlesArray: String[]) {
+function logBookTitles(titlesArray: string[]) {
     console.log(titlesArray);
 }
 

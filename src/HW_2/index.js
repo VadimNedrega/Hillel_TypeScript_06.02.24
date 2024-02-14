@@ -2,7 +2,7 @@
 //функція getAllBooks()
 function getAllBooks() {
     const bookList = [];
-    bookArr1.map((book, category) => {
+    bookArr1.map((book) => {
         const bookObj = new Book(book.id, book.title, book.author, book.available);
         bookList.push(bookObj);
         bookObj.category = setCategoryForBook(bookObj);
@@ -12,7 +12,7 @@ function getAllBooks() {
 //функція logFirstAvailable()
 function logFirstAvailable(booksArray) {
     console.log(`Array has length: ${booksArray.length}`);
-    console.log(`First's book name: ${booksArray.at(0)?.title}`);
+    console.log(`First's book name: ${booksArray[0].title}`);
 }
 //функція getBookTitlesByCategory()
 function getBookTitlesByCategory(category) {
