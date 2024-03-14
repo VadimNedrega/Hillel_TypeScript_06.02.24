@@ -37,9 +37,7 @@ interface Magazine {
 }
 
 class Shelf<T> {
-    constructor(readonly items: T[]) {
-        this.items = items;
-    }
+    constructor(public items: T[] = []) {}
 
     add(item: T) {
         this.items.push(item);
@@ -50,7 +48,7 @@ class Shelf<T> {
     }
 }
 
-const bookShelf = new Shelf<Book>([]);
+const bookShelf = new Shelf<Book>();
 inventory.forEach(inv =>
     bookShelf.add(new Book(inv.id, inv.title, inv.author, inv.available, inv.category))
 );
@@ -67,10 +65,10 @@ const magazines = [
 
 ];
 
-const magazineShelf = new Shelf<Magazine>(magazines.map(item => ({
-    title: item.title,
-    publisher: item.publisher
-})));
+const magazineShelf = new Shelf<Magazine>();
+magazines.forEach(mag => {
+    magazineShelf.add(mag);
+})
 
 console.log(magazineShelf.items[0]);
 
