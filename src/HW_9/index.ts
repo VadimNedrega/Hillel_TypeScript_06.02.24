@@ -1,11 +1,15 @@
 {
-    type BookOrMagazine = Book | Magazine;
-
     class Shelf {
-        constructor(public items: BookOrMagazine [] = []) {}
+        constructor(public items: (Book [] | Magazine []) = []) {}
 
-        add(item: BookOrMagazine) {
-            this.items.push(item);
+        add(item: Book | Magazine) {
+            if (item instanceof Book && this.items.filter(book => book instanceof Book)) {
+                (this.items as Book[]).push(item);
+            } else if ('publisher' in item && this.items.filter(magazine => 'publisher' in magazine)) {
+                (this.items as Magazine[]).push(item);
+            } else {
+                throw new Error("Wrong Type. Must be Book or Magazine")
+            }
         }
 
         getFirst() {
