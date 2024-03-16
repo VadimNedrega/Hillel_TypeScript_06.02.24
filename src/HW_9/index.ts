@@ -1,11 +1,12 @@
 {
     class Shelf {
-        constructor(public items: (Book [] | Magazine []) = []) {}
+        constructor(public items: (Book [] | Magazine []) = []) {
+        }
 
         add(item: Book | Magazine) {
-            if (item instanceof Book && this.items.filter(book => book instanceof Book)) {
+            if (item instanceof Book && this.items.every(book => book instanceof Book)) {
                 (this.items as Book[]).push(item);
-            } else if ('publisher' in item && this.items.filter(magazine => 'publisher' in magazine)) {
+            } else if ('publisher' in item && this.items.every(magazine => 'publisher' in magazine && 'title' in magazine)) {
                 (this.items as Magazine[]).push(item);
             } else {
                 throw new Error("Wrong Type. Must be Book or Magazine")
@@ -16,20 +17,11 @@
             return this.items[0];
         }
 
-        printTitles(){
+        printTitles() {
             this.items.forEach(item => console.log(item instanceof Book ? `Book: ${item.title}` : `Magazine: ${item.title}`))
         }
 
-        //В цьому випадку TypeScript не може розділити методи класу за допомогою перевантаження функцій, як це робить JavaScript, тому помилка
-        // find(id: number){
-        //     console.log(this.items.filter(item => item.id === id));
-        // }
-        //
-        // find(author: string){
-        //     console.log(this.items.filter(item => item.author === author));
-        // }
-
-        find(param: number | string) : void {
+        find(param: number | string): void {
             typeof param === "number"
                 ? console.log(this.items.filter(item => item instanceof Book && item.id === param))
                 : console.log(this.items.filter(item => 'title' in item && 'publisher' in item && item.publisher === param));
@@ -41,10 +33,14 @@
         bookShelf.add(new Book(inv.id, inv.title, inv.author, inv.available, inv.category))
     );
 
+    //bookShelf.add({title: "", publisher: ""}) помилка додавання Magazine у масив Book
+
     const magazineShelf = new Shelf();
     magazines.forEach(mag => {
         magazineShelf.add(mag);
     })
+
+    magazineShelf.add({title: "new Title", publisher: "000"});
 
     console.log("________________HW_9_________________")
     bookShelf.printTitles();
