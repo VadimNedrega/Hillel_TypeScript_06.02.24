@@ -2,7 +2,7 @@
 
 {
     type DeepReadonly<T> = {
-        readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K] & { readonly __deepReadonlyDescriptor?: PropertyDescriptor };
+        readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K];
     }
 
     const a: DeepReadonly<string> = "string";
@@ -20,9 +20,7 @@
 
 {
     type DeepRequireReadonly<T> = {
-        readonly [K in keyof T]-?: T[K] extends object
-            ? DeepRequireReadonly<T[K]> & { readonly __deepReadonlyDescriptor?: PropertyDescriptor }
-            : T[K] & { readonly __deepReadonlyDescriptor?: PropertyDescriptor };
+        readonly [K in keyof T]-?: T[K] extends object ? DeepRequireReadonly<T[K]> : T[K];
     };
 
     const nestedRequireObj: DeepRequireReadonly<{age: number, nameData : {name: string, surname?: string}}> = {
