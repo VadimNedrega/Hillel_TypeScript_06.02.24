@@ -1,14 +1,13 @@
 //Builder
-
 {
     class Pizza {
-        private readonly _type: PizzaType;
+        private _type: PizzaType | null = null;
         private _form: PizzaForm | null = null;
         private _size: PizzaSize| null = null;
         private _supplements: PizzaSupplement [] = [];
 
-        constructor(type: PizzaType) {
-            this._type = type;
+        set type(value: PizzaType | null) {
+            this._type = value;
         }
 
         set form(value: PizzaForm | null) {
@@ -24,11 +23,12 @@
         }
 
         public toString(): void {
+            const type = this._type !== null ? `Type: ${PizzaType[this._type]}, ` : '';
             const form = this._form !== null ? `Form: ${PizzaForm[this._form]}, ` : '';
             const size = this._size !== null ? `Size: ${PizzaSize[this._size]}, ` : '';
             const supplements = this._supplements.length > 0 ? `Supplements: ${this._supplements.map(supplement => PizzaSupplement[supplement]).join(', ')}` : '';
 
-            console.log(`${PizzaType[this._type]} pizza: ${form}${size}${supplements}`);
+            console.log(`Pizza: ${type}${form}${size}${supplements}`);
         }
     }
 
@@ -55,33 +55,42 @@
         ONION
     }
 
-    interface PizzaBuilder {
+    interface IPizzaBuilder {
         reset() : void;
-        setForm(form: PizzaForm): GeneralPizzaBuilder;
-        setSize(size: PizzaSize): GeneralPizzaBuilder;
-        setSupplement(supplement: PizzaSupplement): GeneralPizzaBuilder;
+        setType(type: PizzaType): PizzaBuilder;
+        setForm(form: PizzaForm): PizzaBuilder;
+        setSize(size: PizzaSize): PizzaBuilder;
+        setSupplement(supplement: PizzaSupplement): PizzaBuilder;
     }
 
-    abstract class GeneralPizzaBuilder implements PizzaBuilder {
+    class PizzaBuilder implements IPizzaBuilder {
         protected pizza!: Pizza;
 
         constructor() {
             this.reset();
         }
 
-        abstract reset() : void;
+        reset(){
+            this.pizza = new Pizza();
+        }
 
-        setForm(form: PizzaForm): GeneralPizzaBuilder {
+        setType(type: PizzaType): PizzaBuilder {
+            this.pizza.type = type;
+            return this;
+        }
+
+
+        setForm(form: PizzaForm): PizzaBuilder {
             this.pizza.form = form;
             return this;
         }
 
-        setSize(size: PizzaSize): GeneralPizzaBuilder {
+        setSize(size: PizzaSize): PizzaBuilder {
             this.pizza.size = size;
             return this;
         }
 
-        setSupplement(supplement: PizzaSupplement): GeneralPizzaBuilder {
+        setSupplement(supplement: PizzaSupplement): PizzaBuilder {
             this.pizza.addSupplements(supplement);
             return this;
         }
@@ -93,40 +102,17 @@
         }
     }
 
-    class PepperoniBuilder extends GeneralPizzaBuilder implements PizzaBuilder {
-        protected override pizza: Pizza = new Pizza(PizzaType.PEPPERONI);
-
-        public reset(): void {
-            this.pizza = new Pizza(PizzaType.PEPPERONI);
-        }
-    }
-
-    class MeatAndCheeseBuilder extends GeneralPizzaBuilder implements PizzaBuilder {
-        protected override pizza: Pizza = new Pizza(PizzaType.MEAT_AND_CHEESE);
-
-        public reset(): void {
-            this.pizza = new Pizza(PizzaType.MEAT_AND_CHEESE);
-        }
-    }
-
-    class HunterBuilder extends GeneralPizzaBuilder implements PizzaBuilder {
-        protected override pizza: Pizza = new Pizza(PizzaType.HUNTER);
-
-        public reset(): void {
-            this.pizza = new Pizza(PizzaType.HUNTER);
-        }
-    }
-
     //реалізація з классом Директор
     class PizzaDirector {
-        private builder: GeneralPizzaBuilder;
+        private builder: PizzaBuilder;
 
-        constructor(builder: GeneralPizzaBuilder) {
+        constructor(builder: PizzaBuilder) {
             this.builder = builder;
         }
 
         buildHunterPizza(): Pizza {
             return this.builder
+                .setType(PizzaType.HUNTER)
                 .setSize(PizzaSize.MEDIUM)
                 .setForm(PizzaForm.ROUND)
                 .setSupplement(PizzaSupplement.ONION)
@@ -137,12 +123,13 @@
     }
 
     //Клієнтський код:
-    const pepperoni = new PepperoniBuilder();
+    const pepperoni = new PizzaBuilder();
 
     //дефолтна пеппероні
     pepperoni.getPizza().toString();
 
     pepperoni
+        .setType(PizzaType.PEPPERONI)
         .setForm(PizzaForm.ROUND)
         .setSize(PizzaSize.SMALL)
         .setSupplement(PizzaSupplement.MUSHROOMS)
@@ -151,8 +138,9 @@
         .getPizza()
         .toString();
 
-    const meatAndCheese = new MeatAndCheeseBuilder();
+    const meatAndCheese = new PizzaBuilder();
     meatAndCheese
+        .setType(PizzaType.MEAT_AND_CHEESE)
         .setSize(PizzaSize.HUGE)
         .setForm(PizzaForm.SQUARE)
         .setSupplement(PizzaSupplement.ONION)
@@ -166,6 +154,6 @@
     meatAndCheese.getPizza().toString();
 
     //реалізація класу Директор
-    const hunterPizza = new PizzaDirector(new HunterBuilder()).buildHunterPizza();
+    const hunterPizza = new PizzaDirector(new PizzaBuilder()).buildHunterPizza();
     hunterPizza.toString();
 }
